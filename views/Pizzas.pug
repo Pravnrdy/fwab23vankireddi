@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  div(class="container-fluid")
+    h1= title
+  - let results=[{name:"Cheese Pizza",type:"Thincrust",cost:10},{name:"Veggie Pizza",type:"Hand toast",cost:9},{name:"Meat Pizza",type:"Margherita",cost:8}] 
+    div(class="row")
+      each form,index in results
+        div(class = "col-sm-2 " onclick=`buy(${index})`) #{form.name}
+        br
+        br
+        br
+        div(class = "col-sm-2" onclick=`buy(${index})`) #{form.type}
+        br
+        br
+        br
+        div(class = "col-sm-2" onclick=`buy(${index})`) #{form.cost}
+    script.
+     
+     
+
+  
