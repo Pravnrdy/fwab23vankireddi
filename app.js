@@ -53,6 +53,7 @@ var addmodsRouter = require('./routes/addmods');
 var selectorRouter = require('./routes/selector');
 var resourceRouter = require('./routes/resource');
 
+
 var app = express();
 
 // view engine setup
@@ -65,12 +66,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+//app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/Pizzas', PizzasRouter);
 app.use('/addmods', addmodsRouter);
 app.use('/selector', selectorRouter);
 app.use('/resource', resourceRouter);
+app.use('/', resourceRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
