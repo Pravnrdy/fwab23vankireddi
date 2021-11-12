@@ -3,12 +3,56 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var Costume = require("./models/costume");
+
+const connectionString =  'mongodb+srv://Pravn_rdy:Pravn_rdy@cluster0.kj37t.mongodb.net/learnMongo?retryWrites=true&w=majority'
+mongoose = require('mongoose'); 
+mongoose.connect(connectionString, {useNewUrlParser: true, useUnifiedTopology: true}); 
+//Get the default connection 
+var db = mongoose.connection; 
+
+//Get the default connection 
+var db = mongoose.connection; 
+ 
+//Bind connection to error event  
+db.on('error', console.error.bind(console, 'MongoDB connection error:')); 
+db.once("open", function(){ 
+console.log("Connection to DB succeeded")});
+ 
+// We can seed the collection if needed on server start 
+async function recreateDB(){ 
+  // Delete everything 
+  await Costume.deleteMany(); 
+ 
+  let instance1 = new Costume({costume_type:"superheroes",  size:'large', cost:68.5}); 
+  let instance2 = new Costume({costume_type:"demon",  size:'large', cost:32.9}); 
+  let instance3 = new Costume({costume_type:"angels",  size:'large', cost:88.54}); 
+
+instance1.save( function(err,doc) { 
+      if(err) return console.error(err); 
+      console.log("First object saved") 
+  }); 
+
+  instance2.save( function(err,doc) { 
+    if(err) return console.error(err); 
+    console.log("Second object saved") 
+}); 
+instance3.save( function(err,doc) { 
+  if(err) return console.error(err); 
+  console.log("Third object saved") 
+}); 
+} 
+ 
+let reseed = true; 
+if (reseed) { recreateDB();} 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var PizzasRouter = require('./routes/Pizzas');
 var addmodsRouter = require('./routes/addmods');
 var selectorRouter = require('./routes/selector');
+var resourceRouter = require('./routes/resource');
+
 var app = express();
 
 // view engine setup
@@ -26,6 +70,8 @@ app.use('/users', usersRouter);
 app.use('/Pizzas', PizzasRouter);
 app.use('/addmods', addmodsRouter);
 app.use('/selector', selectorRouter);
+app.use('/resource', resourceRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
