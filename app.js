@@ -72,7 +72,7 @@ app.use('/Pizzas', PizzasRouter);
 app.use('/addmods', addmodsRouter);
 app.use('/selector', selectorRouter);
 app.use('/resource', resourceRouter);
-app.use('/', resourceRouter);
+app.use('/costumes', resourceRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
