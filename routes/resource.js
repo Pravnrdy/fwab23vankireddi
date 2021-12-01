@@ -5,9 +5,22 @@ var router = express.Router();
 // Require controller modules. 
 var api_controller = require('../controllers/api'); 
 var costume_controller = require('../controllers/costume'); 
- 
+
+// A little function to check if we have an authorized user and continue on or 
+// redirect to login. 
+const secured = (req, res, next) => { 
+    if (req.user){ 
+      return next(); 
+    } 
+    req.session.returnTo = req.originalUrl; 
+    res.redirect("/login"); 
+  } 
+
 /// API ROUTE /// 
  
+/* GET costumes */ 
+router.get('/', costume_controlers.costume_view_all_Page ); 
+
 // GET resources base. 
 router.get('/', api_controller.api); 
  
@@ -31,14 +44,11 @@ router.get('/costumes', costume_controller.costume_list);
 /* GET detail costume page */ 
 router.get('/detail', costume_controlers.costume_view_one_Page); 
 
-/* GET costumes */ 
-router.get('/', costume_controlers.costume_view_all_Page ); 
-
 /* GET create costume page */ 
 router.get('/create', costume_controlers.costume_create_Page); 
 
 /* GET create update page */ 
-router.get('/update', costume_controlers.costume_update_Page);
+router.get('/update',secured, costume_controlers.costume_update_Page);
 
 /* GET create costume page */ 
 router.get('/delete', costume_controlers.costume_delete_Page); 

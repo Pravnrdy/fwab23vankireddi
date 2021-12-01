@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require('passport'); 
+var LocalStrategy = require('passport-local').Strategy;
 var Costume = require("./models/costume");
 
 const connectionString =  'mongodb+srv://Pravn_rdy:Pravn_rdy@cluster0.kj37t.mongodb.net/learnMongo?retryWrites=true&w=majority'
@@ -66,13 +68,46 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', indexRouter);
+passport.use(new LocalStrategy( 
+  function(username, password, done) { 
+    Account.findOne({ username: username }, function (err, user) { 
+      if (err) { return done(err); } 
+      if (!user) { 
+        return done(null, false, { message: 'Incorrect username.' }); 
+      } 
+      if (!user.validPassword(password)) { 
+        return done(null, false, { message: 'Incorrect password.' }); 
+      } 
+      return done(null, user); 
+    }); 
+  }))
+  
+  app.use(require('express-session')({ 
+    secret: 'keyboard cat', 
+    resave: false, 
+    saveUninitialized: false 
+  })); 
+  app.use(passport.initialize()); 
+  app.use(passport.session()); 
+ 
+  // passport config 
+// Use the existing connection 
+// The Account model  
+var Account =require('./models/account'); 
+ 
+passport.use(new LocalStrategy(Account.authenticate())); 
+passport.serializeUser(Account.serializeUser()); 
+passport.deserializeUser(Account.deserializeUser()); 
+
+
+app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/Pizzas', PizzasRouter);
 app.use('/addmods', addmodsRouter);
 app.use('/selector', selectorRouter);
 app.use('/resource', resourceRouter);
 app.use('/costumes', resourceRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
